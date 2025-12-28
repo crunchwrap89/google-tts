@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mySchema } from "../HelloWorld";
+import { mySchema } from "../TTSVideo";
 import { voices } from "../server/TextToSpeech/constants";
 
 export interface Timepoint {

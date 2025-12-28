@@ -1,6 +1,6 @@
 import { Composition } from "remotion";
 import { Input, UrlSource, ALL_FORMATS } from "mediabunny";
-import { HelloWorld, mySchema } from "./HelloWorld";
+import { TTSVideo, mySchema } from "./TTSVideo";
 import { getTTSFromServer } from "./lib/client-utils";
 import { waitForNoInput } from "./debounce";
 import { SERVER_URL } from "./server/TextToSpeech/constants";
@@ -42,9 +42,9 @@ export const RemotionRoot: React.FC = () => {
 
   return (
     <Composition
-      id="HelloWorld"
+      id="TTSVideo"
       schema={mySchema}
-      component={HelloWorld}
+      component={TTSVideo}
       durationInFrames={300}
       fps={FPS}
       width={1920}

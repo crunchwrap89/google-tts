@@ -5,7 +5,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { Text } from "./HelloWorld/Title";
+import { Text } from "./TTSVideo/Title";
 import { voices } from "./server/TextToSpeech/constants";
 import { RequestMetadata, VoiceType } from "./lib/interfaces";
 import { z } from "zod";
@@ -30,7 +30,7 @@ export const mySchema = z.object({
     .optional(),
 });
 
-export const HelloWorld: React.FC<RequestMetadata> = (props) => {
+export const TTSVideo: React.FC<RequestMetadata> = (props) => {
   const frame = useCurrentFrame();
   const videoConfig = useVideoConfig();
 
