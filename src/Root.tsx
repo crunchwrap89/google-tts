@@ -57,6 +57,7 @@ export const RemotionRoot: React.FC = () => {
         pitch: 0,
         speakingRate: 1,
         audioUrl: null,
+        animationStyle: "pop" as const,
       }}
       calculateMetadata={async ({ props, abortSignal, isRendering }) => {
         // don't debounce user input during rendering

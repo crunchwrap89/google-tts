@@ -10,8 +10,15 @@ import React, { useCallback, useMemo } from "react";
 import { SyncStatus } from "./SyncStatus";
 import { SentenceRenderer } from "./SentenceRenderer";
 
+// Force TS check
 export const Captions: React.FC<RequestMetadata> = (props) => {
-  const { captionText, captionColor, timepoints, debug = false } = props;
+  const {
+    captionText,
+    captionColor,
+    timepoints,
+    debug = false,
+    animationStyle = "pop",
+  } = props;
   const videoConfig = useVideoConfig();
 
   const audioDurationFrames = Math.max(1, videoConfig.durationInFrames - 70);
@@ -67,6 +74,7 @@ export const Captions: React.FC<RequestMetadata> = (props) => {
             nextSentenceStartTime={nextSentenceStartTime}
             getWordStartTime={getStartTime}
             captionColor={captionColor}
+            animationStyle={animationStyle}
           />
         );
       })}

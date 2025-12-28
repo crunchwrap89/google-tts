@@ -29,6 +29,9 @@ export const mySchema = z.object({
     )
     .optional(),
   debug: z.boolean().optional(),
+  animationStyle: z
+    .enum(["pop", "karaoke", "typewriter", "matrix"])
+    .optional(),
 });
 
 export const TTSVideo: React.FC<RequestMetadata> = (props) => {
