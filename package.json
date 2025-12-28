@@ -1,7 +1,7 @@
 {
   "name": "google-tts",
   "version": "1.0.0",
-  "description": "My Remotion video",
+  "description": "Text to speech with synced captions",
   "repository": {},
   "license": "UNLICENSED",
   "private": true,
