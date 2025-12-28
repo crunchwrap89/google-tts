@@ -2,10 +2,16 @@ import { z } from "zod";
 import { mySchema } from "../HelloWorld";
 import { voices } from "../server/TextToSpeech/constants";
 
+export interface Timepoint {
+  markName: string;
+  timeSeconds: number;
+}
+
 export type ServerResponse =
   | {
       type: "success";
       url: string;
+      timepoints: Timepoint[];
     }
   | {
       type: "error";

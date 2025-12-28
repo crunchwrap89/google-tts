@@ -21,6 +21,14 @@ export const mySchema = z.object({
   pitch: z.coerce.number().min(-20).max(20),
   speakingRate: z.coerce.number().min(0.25).max(4),
   audioUrl: z.string().or(z.null()),
+  timepoints: z
+    .array(
+      z.object({
+        markName: z.string(),
+        timeSeconds: z.number(),
+      }),
+    )
+    .optional(),
 });
 
 export const HelloWorld: React.FC<RequestMetadata> = (props) => {

@@ -1,8 +1,9 @@
-import { getAudioDurationInSeconds } from "@remotion/media-utils";
 import { Composition } from "remotion";
+import { Input, UrlSource, ALL_FORMATS } from "mediabunny";
 import { HelloWorld, mySchema } from "./HelloWorld";
 import { getTTSFromServer } from "./lib/client-utils";
 import { waitForNoInput } from "./debounce";
+import { SERVER_URL } from "./server/TextToSpeech/constants";
 
 export const RemotionRoot: React.FC = () => {
   const FPS = 30;
@@ -50,9 +51,9 @@ export const RemotionRoot: React.FC = () => {
       height={1080}
       defaultProps={{
         titleText:
-          "Text to speech on Remotion using  Google Cloud and Firebase!" as const,
+          "Hi there, my name is Jennie. I will guide you through your course. But first, let me introduce myself. I am not a person, i am just plain text that has been dynamically generated into an audio file. Then i have been streamed serverside and my creator made me more fun to listen to by adding a visualizer and and synced the audio with the pace of my voice. What do you think?" as const,
         subtitleText:
-          "With these powerful tools, what will you build?" as const,
+          "" as const,
         titleColor: "#2E8AEA" as const,
         voice: "Woman 1 (US)" as const,
         pitch: 0,
@@ -65,16 +66,22 @@ export const RemotionRoot: React.FC = () => {
           await waitForNoInput(abortSignal, 1000);
         }
 
-        const audioUrl = await getTTSFromServer({ ...props });
-        const audioDurationInSeconds =
-          await getAudioDurationInSeconds(audioUrl);
-        const calculatedVideoDuration = Math.ceil(audioDurationInSeconds);
+        const { url: audioUrl, timepoints } = await getTTSFromServer({ ...props });
+
+        const proxiedUrl = `${SERVER_URL}/proxy?url=${encodeURIComponent(audioUrl)}`;
+        const source = new UrlSource(proxiedUrl);
+        const input = new Input({ source, formats: ALL_FORMATS });
+        const audioDurationInSeconds = await input.computeDuration();
+        input.dispose();
+
+        const audioDurationInFrames = Math.ceil(audioDurationInSeconds * FPS);
         return {
           props: {
             ...props,
             audioUrl,
+            timepoints,
           },
-          durationInFrames: 30 + calculatedVideoDuration * FPS,
+          durationInFrames: 35 + audioDurationInFrames,
         };
       }}
     />

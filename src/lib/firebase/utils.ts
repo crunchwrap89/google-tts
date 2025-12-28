@@ -9,14 +9,33 @@ export const uploadFileToFirebase = async (
   const storageRef = ref(storage, filePath);
 
   // Upload file
-  const uploadedFile = await uploadBytes(storageRef, audioData);
-  return uploadedFile;
+  return await uploadBytes(storageRef, audioData);
+};
+
+export const uploadJsonToFirebase = async (
+  jsonData: object,
+  filePath: string,
+) => {
+  const storageRef = ref(storage, filePath);
+  const jsonString = JSON.stringify(jsonData);
+  const encoder = new TextEncoder();
+  const data = encoder.encode(jsonString);
+  await uploadBytes(storageRef, data);
+};
+
+export const downloadJsonFromFirebase = async (filePath: string) => {
+  try {
+    const url = await getDownloadURL(ref(storage, filePath));
+    const response = await fetch(url);
+    return await response.json();
+  } catch {
+    return null;
+  }
 };
 
 export const createFirebaseUrl = async (fullPath: string): Promise<string> => {
   // Return download URL
-  const url = await getDownloadURL(ref(storage, fullPath));
-  return url;
+  return await getDownloadURL(ref(storage, fullPath));
 };
 
 export const checkIfAudioHasAlreadyBeenSynthesized = async (
@@ -24,8 +43,7 @@ export const checkIfAudioHasAlreadyBeenSynthesized = async (
 ) => {
   try {
     // Return URL for download
-    const url = await getDownloadURL(ref(storage, filePath));
-    return url;
+    return await getDownloadURL(ref(storage, filePath));
   } catch {
     return false;
   }
