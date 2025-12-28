@@ -12,9 +12,8 @@ import { z } from "zod";
 import { zColor } from "@remotion/zod-types";
 
 export const mySchema = z.object({
-  titleText: z.string(),
-  subtitleText: z.string(),
-  titleColor: zColor(),
+  captionText: z.string(),
+  captionColor: zColor(),
   voice: z.enum(
     Object.keys(voices) as [VoiceType] | [VoiceType, ...VoiceType[]],
   ),

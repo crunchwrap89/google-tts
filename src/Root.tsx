@@ -50,11 +50,9 @@ export const RemotionRoot: React.FC = () => {
       width={1920}
       height={1080}
       defaultProps={{
-        titleText:
-          "Hi there, my name is Jennie. I will guide you through your course. But first, let me introduce myself. I am not a person, i am just plain text that has been dynamically generated into an audio file. Then i have been streamed serverside and my creator made me more fun to listen to by adding a visualizer and and synced the audio with the pace of my voice. What do you think?" as const,
-        subtitleText:
-          "" as const,
-        titleColor: "#2E8AEA" as const,
+        captionText:
+          "Hi there, my name is Gemma. I will guide you through your course. But first, let me introduce myself. I am not a person, i am just plain text that has been dynamically generated into an audio file. Then i have been streamed serverside and my creator made me more fun to listen to by adding a visualizer. He also synced the captions with the pace of my voice. What do you think?" as const,
+        captionColor: "#2E8AEA" as const,
         voice: "Woman 1 (US)" as const,
         pitch: 0,
         speakingRate: 1,
@@ -81,7 +79,7 @@ export const RemotionRoot: React.FC = () => {
             audioUrl,
             timepoints,
           },
-          durationInFrames: 35 + audioDurationInFrames,
+          durationInFrames: 35 + audioDurationInFrames + 35,
         };
       }}
     />

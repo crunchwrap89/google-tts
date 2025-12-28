@@ -18,7 +18,7 @@ export const createTextToSpeechAudio = async (
   if (!voices[props.voice]) throw new Error("Voice not found");
   const selectedVoice = voices[props.voice];
 
-  const words = props.titleText.trim().split(/\s+/);
+  const words = props.captionText.trim().split(/\s+/);
   const markedText = words
     .map((word, i) => `<mark name="word_${i}"/>${word}`)
     .join(" ");
@@ -26,7 +26,7 @@ export const createTextToSpeechAudio = async (
   const ssml = `
 <speak>
 <prosody>
-${markedText}<break time="250ms"/>${props.subtitleText}
+${markedText}
 </prosody>
 </speak>`;
 

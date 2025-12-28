@@ -8,15 +8,89 @@ import {
 import { SERVER_URL } from "../server/TextToSpeech/constants";
 import { RequestMetadata } from "../lib/interfaces";
 import { AudioVisualizer } from "./AudioVisualizer";
+import { Sentence, splitIntoSentences } from "../lib/text-utils";
+import React, { useCallback, useMemo } from "react";
+
+
+const SentenceRenderer: React.FC<{
+  sentence: Sentence & { startTime: number };
+  nextSentenceStartTime: number;
+  getWordStartTime: (index: number) => number;
+  captionColor: string;
+}> = ({ sentence, nextSentenceStartTime, getWordStartTime, captionColor }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Show sentence until next one starts
+  if (frame < sentence.startTime || frame >= nextSentenceStartTime) {
+    return null;
+  }
+
+  // Fade out in the last 10 frames before the next sentence
+  const opacity = interpolate(
+    frame,
+    [nextSentenceStartTime - 10, nextSentenceStartTime],
+    [1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
+
+  return (
+    <p
+      style={{
+        fontFamily: "SF Pro Text, Helvetica, Arial",
+        fontWeight: "bold",
+        fontSize: 60,
+        textAlign: "center",
+        position: "absolute",
+        bottom: 100,
+        width: "100%",
+        paddingLeft: 50,
+        paddingRight: 50,
+        margin: 0,
+        opacity,
+      }}
+    >
+      {sentence.words.map((t, i) => {
+        const globalIndex = sentence.wordIndices[i];
+        const startFrame = getWordStartTime(globalIndex);
+
+        return (
+          <span
+            key={`${globalIndex}-${t}`}
+            style={{
+              color: captionColor,
+              marginLeft: 8,
+              marginRight: 8,
+              transform: `scale(${spring({
+                fps,
+                frame: frame - startFrame,
+                config: {
+                  damping: 100,
+                  stiffness: 200,
+                  mass: 0.5,
+                },
+              })})`,
+              display: "inline-block",
+            }}
+          >
+            {t}
+          </span>
+        );
+      })}
+    </p>
+  );
+};
 
 export const Text: React.FC<RequestMetadata> = (props) => {
-  const { titleText, titleColor, subtitleText, timepoints } = props;
+  const { captionText, captionColor, timepoints } = props;
   const videoConfig = useVideoConfig();
-  const realFrame = useCurrentFrame();
 
-  const audioDurationFrames = Math.max(1, videoConfig.durationInFrames - 35);
-  const titleTextForAnimation = titleText.trim().split(/\s+/).map((t) => ` ${t} `);
-  const delayPerWord = audioDurationFrames / titleTextForAnimation.length;
+  const audioDurationFrames = Math.max(1, videoConfig.durationInFrames - 70);
+  const captionTextForAnimation = captionText
+    .trim()
+    .split(/\s+/)
+    .map((t) => ` ${t} `);
+  const delayPerWord = audioDurationFrames / captionTextForAnimation.length;
 
   const proxiedUrl = props.audioUrl
     ? `${SERVER_URL}/proxy?url=${encodeURIComponent(props.audioUrl)}`
@@ -26,103 +100,45 @@ export const Text: React.FC<RequestMetadata> = (props) => {
     console.warn("No timepoints available for text animation sync.");
   }
 
+  const getStartTime = useCallback((index: number) => {
+    const timepoint = timepoints?.find((tp) => tp.markName === `word_${index}`);
+    return timepoint
+      ? Number(timepoint.timeSeconds) * videoConfig.fps
+      : index * delayPerWord;
+  }, [delayPerWord, timepoints, videoConfig.fps]);
+
+  const sentencesWithTiming = useMemo(() => {
+    const sentences = splitIntoSentences(captionText);
+    return sentences.map((s) => {
+      const firstWordIndex = s.wordIndices[0];
+      const startTime = getStartTime(firstWordIndex);
+      return { ...s, startTime };
+    });
+  }, [captionText, getStartTime]);
+
   return (
     <>
-      {/* Debug indicator for sync status */}
-      <div
-        style={{
-          position: "absolute",
-          top: 50,
-          left: 50,
-          fontSize: 24,
-          fontWeight: "bold",
-          color: timepoints && timepoints.length > 0 ? "green" : "red",
-          zIndex: 1000,
-        }}
-      >
-        Sync:{" "}
-        {timepoints && timepoints.length > 0
-          ? "Active"
-          : "Fallback (Linear) - Try restarting server"}
-      </div>
-
       {proxiedUrl && (
         <Html5Audio id="TTS Audio" about="TTS Audio" src={proxiedUrl} />
       )}
 
       {proxiedUrl && <AudioVisualizer audioUrl={props.audioUrl!} />}
 
-      <h1
-        style={{
-          fontFamily: "SF Pro Text, Helvetica, Arial",
-          fontWeight: "bold",
-          fontSize: 110,
-          textAlign: "center",
-          position: "absolute",
-          top: 160,
-          width: "100%",
-        }}
-      >
-        {titleTextForAnimation.map((t, i) => {
-          const timepoint = timepoints?.find(
-            (tp) => tp.markName === `word_${i}`,
-          );
-          const startFrame = timepoint
-            ? Number(timepoint.timeSeconds) * videoConfig.fps
-            : i * delayPerWord;
+      {sentencesWithTiming.map((sentence, index) => {
+        const nextSentenceStartTime =
+          sentencesWithTiming[index + 1]?.startTime ??
+          videoConfig.durationInFrames;
 
-          return (
-            <span
-              key={`${i}-${t}`}
-              style={{
-                color: titleColor,
-                marginLeft: 10,
-                marginRight: 10,
-                transform: `scale(${spring({
-                  fps: videoConfig.fps,
-                  frame: realFrame - startFrame,
-                  config: {
-                    damping: 100,
-                    stiffness: 200,
-                    mass: 0.5,
-                  },
-                })})`,
-                display: "inline-block",
-              }}
-            >
-              {t}
-            </span>
-          );
-        })}
-      </h1>
-
-      <h2
-        style={{
-          opacity: interpolate(
-            realFrame,
-            [audioDurationFrames, audioDurationFrames + 5],
-            [0.1, 1],
-          ),
-          transform: `scale(${interpolate(
-            realFrame,
-            [audioDurationFrames, audioDurationFrames + 5],
-            [0.9, 1],
-            {
-              extrapolateRight: "clamp",
-            },
-          )})`,
-          fontFamily: "SF Pro Text, Helvetica, Arial",
-          fontWeight: "bold",
-          fontSize: 70,
-          textAlign: "center",
-          position: "absolute",
-          bottom: 160,
-          width: "100%",
-          color: titleColor,
-        }}
-      >
-        {subtitleText}
-      </h2>
+        return (
+          <SentenceRenderer
+            key={index}
+            sentence={sentence}
+            nextSentenceStartTime={nextSentenceStartTime}
+            getWordStartTime={getStartTime}
+            captionColor={captionColor}
+          />
+        );
+      })}
     </>
   );
 };

@@ -16,7 +16,7 @@ export const AudioVisualizer: React.FC<{ audioUrl: string }> = ({ audioUrl }) =>
       fps,
       frame,
       audioData,
-      numberOfSamples: 32, // Number of bars
+      numberOfSamples: 32,
     });
   }, [fps, frame, audioData]);
 
@@ -24,27 +24,34 @@ export const AudioVisualizer: React.FC<{ audioUrl: string }> = ({ audioUrl }) =>
     return null;
   }
 
+  // Mirror the visualization: high -> low | low -> high
+  const mirroredVisualization = [...[...visualization].reverse(), ...visualization];
+
   return (
-    <div style={{
+    <div
+      style={{
         display: "flex",
         flexDirection: "row",
         gap: "6px",
-        alignItems: "flex-end",
+        alignItems: "center",
         justifyContent: "center",
-        height: "150px",
+        height: "200px",
         width: "100%",
         position: "absolute",
-        bottom: "300px"
-    }}>
-      {visualization.map((v, i) => {
+        bottom: "500px",
+      }}
+    >
+      {mirroredVisualization.map((v, i) => {
+        const height = 500 * Math.sqrt(v); // Sqrt to boost smaller values
         return (
           <div
             key={i}
             style={{
-              width: "15px",
-              height: `${500 * v}px`,
-              backgroundColor: "#4285F4",
-              borderRadius: "4px",
+              width: "10px",
+              height: `${Math.max(8, height)}px`,
+              background: "linear-gradient(180deg, #4285F4 0%, #a6c8ff 100%)",
+              borderRadius: "10px",
+              boxShadow: `0 0 ${height / 5}px rgba(66, 133, 244, 0.6)`,
             }}
           />
         );
