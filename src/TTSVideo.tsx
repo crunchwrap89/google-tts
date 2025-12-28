@@ -36,6 +36,9 @@ export const mySchema = z.object({
   animationStyle: z
     .enum(["pop", "karaoke", "typewriter", "matrix"])
     .optional(),
+  visualizationStyle: z
+    .enum(["bars", "wave", "classic", "lines"])
+    .optional(),
 });
 
 export const TTSVideo: React.FC<RequestMetadata> = (props) => {
@@ -71,7 +74,12 @@ export const TTSVideo: React.FC<RequestMetadata> = (props) => {
             <Html5Audio id="TTS Audio" about="TTS Audio" src={proxiedUrl} />
           )}
 
-          {proxiedUrl && <AudioVisualizer audioUrl={props.audioUrl!} />}
+          {proxiedUrl && (
+            <AudioVisualizer
+              audioUrl={props.audioUrl!}
+              visualizationStyle={props.visualizationStyle}
+            />
+          )}
 
           <Captions {...props} />
         </Sequence>
