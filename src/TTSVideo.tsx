@@ -5,7 +5,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { Text } from "./TTSVideo/Title";
+import { Captions } from "./TTSVideo/Captions";
 import { voices } from "./server/TextToSpeech/constants";
 import { RequestMetadata, VoiceType } from "./lib/interfaces";
 import { z } from "zod";
@@ -28,6 +28,7 @@ export const mySchema = z.object({
       }),
     )
     .optional(),
+  debug: z.boolean().optional(),
 });
 
 export const TTSVideo: React.FC<RequestMetadata> = (props) => {
@@ -49,7 +50,7 @@ export const TTSVideo: React.FC<RequestMetadata> = (props) => {
     <AbsoluteFill style={{ flex: 1, backgroundColor: "white" }}>
       <div style={{ opacity }}>
         <Sequence from={transitionStart + 10}>
-          <Text {...props} />
+          <Captions {...props} />
         </Sequence>
       </div>
     </AbsoluteFill>
