@@ -1,11 +1,11 @@
-import { TTSConst } from "../../../server/tts/const/TTSConst";
 import { RequestMetadata, ServerResponse, Timepoint } from "../../../common/types";
+import { SERVER_URL } from "../../../common/const";
 
 export const getTTSFromServer = async (
   props: RequestMetadata,
 ): Promise<{ url: string; timepoints: Timepoint[] }> => {
   const result: ServerResponse = await (
-    await fetch(TTSConst.SERVER_URL + `/getdata`, {
+    await fetch(SERVER_URL + `/getdata`, {
       method: "POST",
       body: JSON.stringify(props),
       headers: { "Content-Type": "application/json" },

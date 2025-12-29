@@ -1,6 +1,6 @@
 import React from "react";
 import { interpolate, useCurrentFrame, random } from "remotion";
-import { WordAnimationProps } from "../../models/types";
+import { WordAnimationProps } from "../../../../common/types";
 
 export const MatrixWord: React.FC<WordAnimationProps> = ({
   word,

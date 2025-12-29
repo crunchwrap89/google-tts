@@ -1,6 +1,6 @@
 import React from "react";
 import { spring, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { WordAnimationProps } from "../../models/types";
+import { WordAnimationProps } from "../../../../common/types";
 
 export const PopWord: React.FC<WordAnimationProps> = ({
   word,

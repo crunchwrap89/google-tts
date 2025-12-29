@@ -5,18 +5,18 @@ import {
   downloadJsonFromFirebase,
   uploadFileToFirebase,
   uploadJsonToFirebase,
-} from "../../../client/firebase/utils";
-import { TTSConst } from "../const/TTSConst";
+} from "../client/firebase/utils";
 import textToSpeech from "@google-cloud/text-to-speech";
-import { RequestMetadata, Timepoint } from "../../../common/types";
+import { RequestMetadata, Timepoint } from "../common/types";
+import { AUDIO_DIRECTORY_IN_BUCKET, VOICES } from "../common/const";
 
 const client = new textToSpeech.v1beta1.TextToSpeechClient();
 
 const createTextToSpeechAudio = async (
   props: RequestMetadata,
 ): Promise<{ url: string; timepoints: Timepoint[] }> => {
-  if (!TTSConst.voices[props.voice]) throw new Error("Voice not found");
-  const selectedVoice = TTSConst.voices[props.voice];
+  if (!VOICES[props.voice]) throw new Error("Voice not found");
+  const selectedVoice = VOICES[props.voice];
 
   const words = props.captionText.trim().split(/\s+/);
   const markedText = words
@@ -35,7 +35,7 @@ ${markedText}
    * * Only hashing the SSML makes it easy to find specific voice audios in Firebase storage.
    */
   const ssmlHash = md5(`${ssml} ${props.speakingRate} ${props.pitch}`);
-  const filePathInBucket = `${TTSConst.audioDirectoryInBucket}/${selectedVoice.name}-${ssmlHash}.mp3`;
+  const filePathInBucket = `${AUDIO_DIRECTORY_IN_BUCKET}/${selectedVoice.name}-${ssmlHash}.mp3`;
   const timepointsPathInBucket = filePathInBucket.replace(".mp3", ".json");
 
   // Return URL if already exists
@@ -100,6 +100,6 @@ ${markedText}
   };
 };
 
-export const TTSUtils = {
+export const ServerUtil = {
   createTextToSpeechAudio,
 }

@@ -1,14 +1,6 @@
 import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
-import { Sentence } from "../utils/text-utils";
-
-interface KaraokeBallProps {
-  sentence: Sentence;
-  wordCenters: number[];
-  getWordStartTime: (index: number) => number;
-  nextSentenceStartTime: number;
-  captionColor: string;
-}
+import { KaraokeBallProps } from "../../../../common/types";
 
 export const KaraokeBall: React.FC<KaraokeBallProps> = ({
   sentence,

@@ -1,11 +1,11 @@
 import { Composition } from "remotion";
 import { Input, UrlSource, ALL_FORMATS } from "mediabunny";
 import { waitForNoInput } from "./tts-video/utils/client-utils";
-import { TTSConst } from "../server/tts/const/TTSConst";
 import { FC } from "react";
 import { TTSVideo } from "./tts-video/components/TTSVideo";
 import { mySchema } from "../common/schema";
 import { getTTSFromServer } from "./tts-video/utils/client-utils";
+import { SERVER_URL } from "../common/const";
 
 export const RemotionRoot: FC = () => {
   const FPS = 30;
@@ -70,7 +70,7 @@ export const RemotionRoot: FC = () => {
 
         const { url: audioUrl, timepoints } = await getTTSFromServer({ ...props });
 
-        const proxiedUrl = `${TTSConst.SERVER_URL}/proxy?url=${encodeURIComponent(audioUrl)}`;
+        const proxiedUrl = `${SERVER_URL}/proxy?url=${encodeURIComponent(audioUrl)}`;
         const source = new UrlSource(proxiedUrl);
         const input = new Input({ source, formats: ALL_FORMATS });
         const audioDurationInSeconds = await input.computeDuration();

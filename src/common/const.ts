@@ -1,8 +1,7 @@
-const FIREBASE_BUCKET_NAME = process.env.FIREBASE_BUCKET_NAME || "";
+export const DEFAULT_NUMBER_OF_SAMPLES = 64;
 
-const AUDIO_SERVERS = {
+export const AUDIO_SERVERS = {
   local: `http://localhost:${process.env.SERVER_PORT ?? 5050}`, // For running on local machine
-
   /**
    * * For example:
    * 1. Remote server: `https://123.45.67.89:5050`
@@ -14,22 +13,14 @@ const AUDIO_SERVERS = {
   remote: `ENTER_YOUR_REMOTE_SERVER_URL`, // For running on remote server/ Github Codespaces
 } as const;
 
-const SERVER_URL = AUDIO_SERVERS.local; // Be sure to select your server URL here before launching Remotion Studio or render.
+export const SERVER_URL = AUDIO_SERVERS.local; // Be sure to select your server URL here before launching Remotion Studio or render.
 
-const audioDirectoryInBucket = "remotion-gtts";
+export const AUDIO_DIRECTORY_IN_BUCKET = "remotion-gtts";
 
-const voices = {
+export const VOICES = {
   "Man 1 (US)": { name: "en-US-Neural2-D", languageCode: "en-US" },
   "Man 2 (US)": { name: "en-US-Neural2-J", languageCode: "en-US" },
   "Woman 1 (US)": { name: "en-US-Neural2-H", languageCode: "en-US" },
   "Woman 2 (US)": { name: "en-US-Neural2-F", languageCode: "en-US" },
 } as const;
-
-export const TTSConst = {
-  FIREBASE_BUCKET_NAME,
-  AUDIO_SERVERS,
-  SERVER_URL,
-  audioDirectoryInBucket,
-  voices,
-};
 

@@ -4,9 +4,8 @@ import { BarsVisualizer } from "./BarsVisualizer";
 import { WaveVisualizer } from "./WaveVisualizer";
 import { ClassicVisualizer } from "./ClassicVisualizer";
 import { LinesVisualizer } from "./LinesVisualizer";
-import { DEFAULT_NUMBER_OF_SAMPLES } from "../utils/constants";
-
-export type VisualizationStyle = "bars" | "wave" | "classic" | "lines";
+import { VisualizationStyle } from "../../../../common/types";
+import { DEFAULT_NUMBER_OF_SAMPLES } from "../../../../common/const";
 
 export const AudioVisualizer: React.FC<{
   audioUrl: string;

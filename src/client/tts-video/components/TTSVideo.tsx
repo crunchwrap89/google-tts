@@ -6,12 +6,12 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { TTSConst } from "../../../server/tts/const/TTSConst";
 import { RequestMetadata } from "../../../common/types";
 import { Captions } from "../tts-captions/components/Captions";
 import { AudioVisualizer } from "../tts-visualizers/components/AudioVisualizer";
 import { SyncStatus } from "../tts-debug/components/SyncStatus";
 import { FC } from "react";
+import { SERVER_URL } from "../../../common/const";
 
 export const TTSVideo: FC<RequestMetadata> = (props) => {
   const frame = useCurrentFrame();
@@ -29,7 +29,7 @@ export const TTSVideo: FC<RequestMetadata> = (props) => {
   const transitionStart = 25;
 
   const proxiedUrl = props.audioUrl
-    ? `${TTSConst.SERVER_URL}/proxy?url=${encodeURIComponent(props.audioUrl)}`
+    ? `${SERVER_URL}/proxy?url=${encodeURIComponent(props.audioUrl)}`
     : null;
 
   return (

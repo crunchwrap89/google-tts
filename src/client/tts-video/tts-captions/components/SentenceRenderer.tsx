@@ -1,9 +1,9 @@
 import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
-import { Sentence } from "../utils/text-utils";
 import { useWordMeasurements } from "../hooks/useWordMeasurements";
 import { KaraokeBall } from "./KaraokeBall";
 import { WordRenderer } from "./WordRenderer";
+import { Sentence } from "../../../../common/types";
 
 export const SentenceRenderer: React.FC<{
   sentence: Sentence & { startTime: number };

@@ -1,5 +1,5 @@
 import React from "react";
-import { VisualizerProps } from "../../models/types";
+import { VisualizerProps } from "../../../../common/types";
 
 export const BarsVisualizer: React.FC<VisualizerProps> = ({ visualization }) => {
   const mirroredVisualization = [

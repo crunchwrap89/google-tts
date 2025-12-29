@@ -1,5 +1,5 @@
 import React from "react";
-import { VisualizerProps } from "../../models/types";
+import { VisualizerProps } from "../../../../common/types";
 
 export const LinesVisualizer: React.FC<VisualizerProps> = ({ visualization }) => {
   return (

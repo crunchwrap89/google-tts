@@ -1,5 +1,5 @@
 import React from "react";
-import { VisualizerProps } from "../../models/types";
+import { VisualizerProps } from "../../../../common/types";
 
 export const ClassicVisualizer: React.FC<VisualizerProps> = ({ visualization }) => {
   return (

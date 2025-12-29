@@ -1,6 +1,6 @@
 import React from "react";
 import { useCurrentFrame } from "remotion";
-import { WordAnimationProps } from "../../models/types";
+import { WordAnimationProps } from "../../../../common/types";
 
 export const KaraokeWord: React.FC<WordAnimationProps> = ({
   word,

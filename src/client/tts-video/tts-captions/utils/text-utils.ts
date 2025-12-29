@@ -1,7 +1,4 @@
-export interface Sentence {
-  words: string[];
-  wordIndices: number[];
-}
+import { Sentence } from "../../../../common/types";
 
 export const splitIntoSentences = (text: string): Sentence[] => {
   const words = text.trim().split(/\s+/);
