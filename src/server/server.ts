@@ -1,9 +1,9 @@
 import express from "express";
-import { createTextToSpeechAudio } from "./TextToSpeech";
 import cors from "cors";
 import dotenv from "dotenv";
-import { RequestMetadata, ServerResponse } from "../lib/interfaces";
 import { Readable } from "stream";
+import { RequestMetadata, ServerResponse } from "../common/types";
+import { TTSUtils } from "./tts/utils/TTSUtils";
 
 dotenv.config();
 
@@ -74,7 +74,7 @@ export const startServer = () => {
     try {
       const data = req.body as RequestMetadata;
 
-      const { url, timepoints } = await createTextToSpeechAudio({ ...data });
+      const { url, timepoints } = await TTSUtils.createTextToSpeechAudio({ ...data });
 
       return res
         .json({ type: "success", url, timepoints } as ServerResponse)

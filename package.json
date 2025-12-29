@@ -36,8 +36,8 @@
     "typescript": "5.9.3"
   },
   "scripts": {
-    "dev": "tsx src/studio.ts",
-    "build": "tsx src/render.ts",
+    "dev": "tsx src/common/studio.ts",
+    "build": "tsx src/common/render.ts",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc"
   }
