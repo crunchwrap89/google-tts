@@ -10,6 +10,7 @@ import { RequestMetadata } from "../../../common/types";
 import { Captions } from "../tts-captions/components/Captions";
 import { AudioVisualizer } from "../tts-visualizers/components/AudioVisualizer";
 import { SyncStatus } from "../tts-debug/components/SyncStatus";
+import { CodeBlockRenderer } from "./CodeBlockRenderer";
 import { FC } from "react";
 import { SERVER_URL } from "../../../common/const";
 
@@ -52,6 +53,8 @@ export const TTSVideo: FC<RequestMetadata> = (props) => {
               visualizationStyle={props.visualizationStyle}
             />
           )}
+
+          <CodeBlockRenderer codeBlocks={props.codeBlocks} />
 
           <Captions {...props} />
         </Sequence>

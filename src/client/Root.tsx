@@ -1,4 +1,4 @@
-import { Composition } from "remotion";
+import { Composition, staticFile } from "remotion";
 import { Input, UrlSource, ALL_FORMATS } from "mediabunny";
 import { waitForNoInput } from "./tts-video/utils/client-utils";
 import { FC } from "react";
@@ -6,6 +6,8 @@ import { TTSVideo } from "./tts-video/components/TTSVideo";
 import { mySchema } from "../common/schema";
 import { getTTSFromServer } from "./tts-video/utils/client-utils";
 import { SERVER_URL } from "../common/const";
+import { parseMarkdown } from "./utils/markdown-parser";
+import { generateSsmlFromSegments } from "./utils/ssml-utils";
 
 export const RemotionRoot: FC = () => {
   const FPS = 30;
@@ -59,8 +61,8 @@ export const RemotionRoot: FC = () => {
         pitch: 0,
         speakingRate: 1,
         audioUrl: null,
-        animationStyle: "pop" as const,
-        visualizationStyle: "classic" as const,
+        animationStyle: "typewriter" as const,
+        visualizationStyle: "bars" as const,
       }}
       calculateMetadata={async ({ props, abortSignal, isRendering }) => {
         // don't debounce user input during rendering
@@ -68,7 +70,34 @@ export const RemotionRoot: FC = () => {
           await waitForNoInput(abortSignal, 1000);
         }
 
-        const { url: audioUrl, timepoints } = await getTTSFromServer({ ...props });
+        // Fetch and parse markdown
+        const response = await fetch(staticFile('texts/example.md'));
+        if (!response.ok) {
+            throw new Error(`Failed to fetch markdown: ${response.status} ${response.statusText}`);
+        }
+        const markdown = await response.text();
+        if (markdown.trim().startsWith('<!DOCTYPE html>')) {
+             throw new Error('Fetched content is HTML, not Markdown. Check file path.');
+        }
+        console.log("Fetched markdown length:", markdown.length);
+
+        const { segments } = await parseMarkdown(markdown);
+        console.log("Parsed segments:", segments.length);
+        console.log(segments)
+
+        const { ssml, codeBlocks: codeBlocksData, captionText } = generateSsmlFromSegments(segments);
+        console.log("Generated SSML length:", ssml.length);
+        console.log("Caption text length:", captionText.length);
+
+        const { url: audioUrl, timepoints } = await getTTSFromServer({ ...props, ssml, captionText });
+
+        const finalCodeBlocks = codeBlocksData.map((block, index) => {
+            const startMark = timepoints.find(tp => tp.markName === `code_${index}_start`);
+            return {
+                ...block,
+                startTime: startMark ? startMark.timeSeconds : 0
+            };
+        });
 
         const proxiedUrl = `${SERVER_URL}/proxy?url=${encodeURIComponent(audioUrl)}`;
         const source = new UrlSource(proxiedUrl);
@@ -77,11 +106,14 @@ export const RemotionRoot: FC = () => {
         input.dispose();
 
         const audioDurationInFrames = Math.ceil(audioDurationInSeconds * FPS);
+
         return {
           props: {
             ...props,
             audioUrl,
             timepoints,
+            codeBlocks: finalCodeBlocks,
+            captionText,
           },
           durationInFrames: 35 + audioDurationInFrames + 35,
         };

@@ -12,6 +12,7 @@ export const mySchema = z.object({
   pitch: z.coerce.number().min(-20).max(20),
   speakingRate: z.coerce.number().min(0.25).max(4),
   audioUrl: z.string().or(z.null()),
+  ssml: z.string().optional(),
   timepoints: z
     .array(
       z.object({
@@ -26,6 +27,16 @@ export const mySchema = z.object({
     .optional(),
   visualizationStyle: z
     .enum(["bars", "wave", "classic", "lines"])
+    .optional(),
+  codeBlocks: z
+    .array(
+      z.object({
+        language: z.string(),
+        content: z.string(),
+        startTime: z.number(),
+        duration: z.number(),
+      }),
+    )
     .optional(),
 });
 
